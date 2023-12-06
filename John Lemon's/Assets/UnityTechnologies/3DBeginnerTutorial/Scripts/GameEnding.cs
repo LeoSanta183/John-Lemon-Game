@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class GameEnding : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class GameEnding : MonoBehaviour
     public AudioSource exitAudio;
     public CanvasGroup caughtBackgroundImageCanvasGroup;
     public AudioSource caughtAudio;
+    [SerializeField] TextMeshProUGUI timerText;
+    [SerializeField] float remainingTime = 90;
 
     bool m_IsPlayerAtExit;
     bool m_IsPlayerCaught;
@@ -33,11 +36,20 @@ public class GameEnding : MonoBehaviour
 
     void Update ()
     {
+        remainingTime -= Time.deltaTime;
+        int minutes = Mathf.FloorToInt(remainingTime / 60);
+        int seconds = Mathf.FloorToInt(remainingTime % 60);
+        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+
         if (m_IsPlayerAtExit)
         {
             EndLevel (exitBackgroundImageCanvasGroup, false, exitAudio);
         }
         else if (m_IsPlayerCaught)
+        {
+            EndLevel (caughtBackgroundImageCanvasGroup, true, caughtAudio);
+        }
+        else if(remainingTime < 1)
         {
             EndLevel (caughtBackgroundImageCanvasGroup, true, caughtAudio);
         }

@@ -5,12 +5,15 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float turnSpeed = 20f;
+    public float walkSpeed = 1f;
+    public float sprintSpeed = 2f;
 
     Animator m_Animator;
     Rigidbody m_Rigidbody;
     AudioSource m_AudioSource;
     Vector3 m_Movement;
     Quaternion m_Rotation = Quaternion.identity;
+    bool isSprinting = false;
 
     void Start ()
     {
@@ -46,6 +49,23 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 desiredForward = Vector3.RotateTowards (transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
         m_Rotation = Quaternion.LookRotation (desiredForward);
+
+        isSprinting = Input.GetKey(KeyCode.LeftShift);
+
+        float currentSpeed;
+        if(isSprinting)
+        {
+            currentSpeed = sprintSpeed;
+        }
+        else
+        {
+            currentSpeed = walkSpeed;
+        }
+        
+
+        Vector3 movementSpeed = m_Movement * currentSpeed * Time.deltaTime;
+        m_Rigidbody.MovePosition(m_Rigidbody.position + movementSpeed);
+        m_Rigidbody.MoveRotation(m_Rotation);
     }
 
     void OnAnimatorMove ()
